@@ -35,7 +35,7 @@ Un *job* est une instance d'un programme. Le job "contient" le run.
 
 Afin de faciliter les échanges entre composants et d'éléver la résilience du système, nous avons opté pour des échanges asynchrones par message plutôt que d'utiliser des connexions TCP persistentes entre composants.
 
-# Bus de messages
+### Bus de messages
 
 Le bus de messages a pour objet de faire transiter les messages asynchrones.
 
@@ -51,7 +51,7 @@ Les échanges asynchrones :
 - RESUME : un gestionnaire demande à ce qu'un run suspendu reprenne son exécution
 - REMOVE : un gestionnaire demande la suppression d'un job
 
-# Collecteur
+### Collecteur
 Le collecteur assure la transmission des données en flux (stdin, stdout et stderr) en temps (quasi) réel.
 Les données sont conservées par le collecteur jusqu'à ce que tous les clients connectés les aient lues ou que le run soit supprimé.
 Un client ne peut pas demander une connection aux flux d'un run qui est dans un état terminal.
@@ -60,7 +60,7 @@ Le collecteur consomme les messages suivants sur le bus :
 - HEARBEAT : le collecteur retransmet les battements de coeur
 - REMOVE : suppression d'un run
 
-# Moniteur
+### Moniteur
 Le moniteur partage l'OS du run.
 
 Le moniteur peut traiter les requêtes asynchrones suivantes en les récupérant sur le bus de messages:
