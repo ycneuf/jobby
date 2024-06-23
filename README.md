@@ -36,6 +36,7 @@ Un *job* est une instance d'un programme. Le job "contient" le run.
 Afin de faciliter les échanges entre composants et d'éléver la résilience du système, nous avons opté pour des échanges asynchrones par message plutôt que d'utiliser des connexions TCP persistentes entre composants.
 
 # Bus de messages
+
 Le bus de messages a pour objet de faire transiter les messages asynchrones.
 
 Les échanges asynchrones :
@@ -48,28 +49,30 @@ Les échanges asynchrones :
 - SUSPEND : un gestionnaire demande à ce qu'un run soit suspendu (proprement)
 - STOP : un gestionnaire demande à ce qu'un run soit suspendu immédiatement (méthode brutale)
 - RESUME : un gestionnaire demande à ce qu'un run suspendu reprenne son exécution
-- REMOVE : un gestionnaire demande la suppression d'un run
-- REMOVED : un moniteur indique qu'il a supprimer un run
+- REMOVE : un gestionnaire demande la suppression d'un job
+
 # Collecteur
-Le collecteur assure la transmission des données en flux (stdin, stdout et stderr).
+Le collecteur assure la transmission des données en flux (stdin, stdout et stderr) en temps (quasi) réel.
 Les données sont conservées par le collecteur jusqu'à ce que tous les clients connectés les aient lues ou que le run soit supprimé.
 Un client ne peut pas demander une connection aux flux d'un run qui est dans un état terminal.
+
+Le collecteur consomme les messages suivants sur le bus :
+- HEARBEAT : le collecteur retransmet les battements de coeur
+- REMOVE : suppression d'un run
 
 # Moniteur
 Le moniteur partage l'OS du run.
 
-Le moniteur peut traiter les requêtes asynchrones suivantes :
-- CONFIG : transmettre des éléments de configuration (liste des dispatchers, ...)
-- INIT : initialiser l'environnement d'un run (répertoire dédié)
-- UPLOAD : téléverser des données dans un fichier
-- DOWNLOAD : télécharger des données depuis un fichier
-- RUN : démarrer un run (associe le pid à l'identifiant du job)
-- TERMINATE : terminer (proprement) un run
-- KILL : terminer (brutalement) un run
-- TSTP : suspendre (proprement) un run
-- STOP : suspendre (brutalement) un run
-- CONT : reprendre l'exécution d'un run interrompu
-- REMOVE : supprimer l'environnement d'un run (uniquement si le run est terminé)
+Le moniteur peut traiter les requêtes asynchrones suivantes en les récupérant sur le bus de messages:
+- CREATE : si le moniteur dispose du programme demandé par le job, il peut le prendre en charge
+- TERMINATE, KILL, SUSPEND, STOP, RESUME : si le moniteur gère le run indiqué, il est responsable de la prise en compte des demandes d'un gestionnaire concernant ce run
+- REMOVE : si le moniteur gère le run, il est chargé de sa suppression
+
+Le moniteur émet les messages suivants :
+- CREATED : indique la prise en compte d'un run par le moniteur
+- STOPED : indique l'état terminal d'un run (COMPLETE, FAILED, SUSPENDED, RESUMED, INTERRUPTED, KILLED)
+
+
 
 
 
