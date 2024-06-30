@@ -53,11 +53,33 @@ Le *moniteur* permet à un *job* de :
 - télécharger les données produits dans le répertoire courant
 - libérer les ressources allouées à un *run*
 
+Par ailleurs, le *moniteur* remonte au *gestionnaire* les évènements relatifs à l'exécution des *runs* (démmarage, arrêt, plantage, etc ...).
+
+Le *moniteur* s'enregistre auprès du *gestionnaire* en lui indiquant les *programmes* qu'il est en mesure d'exécuter.
+
+Le *moniteur* émet un signal régulier (battement de coeur ou "hearbeat") permettant de savoir qu'il n'est pas bloqué et toujours disponible pour répondre aux requêtes.
+Un *moniteur* qui n'émet plus ce signal régulier est considéré comme perdu est n'est plus sollicité pour exécuter des *programmes*.
+
+### Collection des jobs
+
+Comme son nom l'indique, la *collection des jobs* est une collection d'items. Elle est implémentée dans une base de données (pas nécessairement relationnelle).
+
+### Dépot de médias
+
+Le *dépôt de médias* assure la persistence des résultats produits par les *runs*.
+
 ### Gestionnaire
-Le *gestionnaire* a en charge les *jobs*.
 
-Le *gestionnaire* 
+Le *gestionnaire* a en charge la cohérence entre le moniteur, la *collection des jobs* , le *depôt de médias* et le *collecteur*.
 
+Le *gestionnaire* présente l'API REST qui est le point d'entrée de Jobby pour les applications.
+
+### Collecteur
+Le *collecteur* (ou *collecteur des flux*) est chargé 
+1/ de la récupération en temps réel des flux (stdout et stderr) produits par les *runs*
+2/ de la redirection des flux destinés à l'entrée standard des *runs"
+
+Le *collecteur* expose une interface WebSocket.
 
 
 ### Programme
